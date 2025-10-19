@@ -1,8 +1,0 @@
-Hello {{ user.email }},
-
-Please verify your email by clicking the link below:
-
-{{ activate_url }}
-
-Thanks,
-Your Team
