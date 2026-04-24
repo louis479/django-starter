@@ -5,6 +5,13 @@ from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 
 
+def home_view(request):
+    if request.user.is_authenticated:
+        return redirect('dashboard')
+    else:
+        return redirect('login')
+
+
 def login_view(request):
     if request.method == 'POST':
         username = request.POST.get('username')
