@@ -3,7 +3,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
-
+from .models import Course, Enrollment
 
 def home_view(request):
     if request.user.is_authenticated:
@@ -45,8 +45,21 @@ def register_view(request):
 
 @login_required(login_url='login')
 def dashboard_view(request):
-    return render(request, 'accounts/dashboard.html')
+    enrollments = Enrollment.objects.filter(user=request.user)
+    return render(request, 'accounts/dashboard.html', {'enrollments': enrollments})
 
+@login_required(login_url='login')
+def course_list(request):
+    courses = Course.objects.all()
+    return render(request, 'accounts/course_list.html', {'courses': courses})
+
+@login_required(login_url='login')
+def enroll_course(request, course_id):
+    course = Course.objects.get(id=course_id)
+
+    if not Enrollment.objects.filter(user=request.user, course=course).exists():
+        Enrollment.objects.create(user=request.user, course=course)
+    return redirect('dashboard')
 
 def logout_view(request):
     logout(request)

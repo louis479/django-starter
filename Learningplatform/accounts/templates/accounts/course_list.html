@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Courses</title>
+</head>
+<body>
+
+<h1>Available Courses</h1>
+
+{% for course in courses %}
+    <div style="border:1px solid #ccc; padding:10px; margin:10px;">
+        <h3>{{ course.title }}</h3>
+        <p>{{ course.description }}</p>
+
+        <a href="{% url 'enroll' course.id %}">Enroll</a>
+    </div>
+{% endfor %}
+
+<a href="{% url 'dashboard' %}">Back to Dashboard</a>
+
+</body>
+</html>
