@@ -53,6 +53,16 @@
 
 <h1>Welcome, {{ request.user.username }}</h1>
 
+<p>Role: {{ request.user.profile.role }}</p>
+
+{% if request.user.profile.role == 'student' %}
+    <a href="{% url 'courses' %}">Browse Courses</a>
+{% endif %}
+
+{% if request.user.profile.role == 'instructor' %}
+    <a href="{% url 'create_course' %}">Create Course</a>
+{% endif %}
+
 <h2>Your Courses</h2>
 
 {% for enroll in enrollments %}
@@ -62,6 +72,8 @@
 {% endfor %}
 
 <a href="{% url 'courses' %}">Browse Courses</a><br><br>
+<br>
+<br>
 <a href="{% url 'logout' %}">Logout</a>
 
 </body>

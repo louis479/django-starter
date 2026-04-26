@@ -4,6 +4,7 @@ from django.contrib import messages
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 from .models import Course, Enrollment
+from .decorators import allowed_roles
 
 def home_view(request):
     if request.user.is_authenticated:
@@ -60,6 +61,26 @@ def enroll_course(request, course_id):
     if not Enrollment.objects.filter(user=request.user, course=course).exists():
         Enrollment.objects.create(user=request.user, course=course)
     return redirect('dashboard')
+
+@login_required(login_url='login')
+@allowed_roles(['instructor'])
+def create_course(request):
+    if request.method == 'POST':
+        title = request.POST.get('title')
+        description = request.POST.get('description')
+
+        Course.objects.create(
+            title=title,
+            description=description,
+            created_by=request.user
+        )
+        return redirect('courses')
+
+    return render(request, 'accounts/create_course.html')
+
+@login_required(login_url='login')
+@allowed_roles(['student'])
+def enroll_course(request, course_id):
 
 def logout_view(request):
     logout(request)
