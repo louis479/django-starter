@@ -1,80 +1,101 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Dashboard</title>
-    <style>
-        body {
-            font-family: Arial;
-            margin: 0;
-            background: #f5f7fb;
-        }
+{% extends 'accounts/base.html' %}
 
-        .navbar {
-            background: #2f5fd0;
-            color: white;
-            padding: 15px;
-            display: flex;
-            justify-content: space-between;
-        }
+{% block title %}Dashboard | Swahilipot Learning{% endblock %}
 
-        .container {
-            padding: 30px;
-        }
-
-        .card {
-            background: white;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-        }
-
-        a {
-            color: white;
-            text-decoration: none;
-        }
-    </style>
-</head>
-<body>
-
-<div class="navbar">
-    <div>Learning Platform</div>
-    <div>
-        {{ request.user.username }} |
-        <a href="{% url 'logout' %}">Logout</a>
+{% block content %}
+<section class="space-y-6">
+    <div class="rounded-3xl bg-gradient-to-r from-slate-900 via-brand-700 to-accent p-8 text-white shadow-soft">
+        <p class="text-sm font-semibold uppercase tracking-[0.2em] text-brand-100">Dashboard</p>
+        <div class="mt-4 flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
+            <div>
+                <h1 class="text-3xl font-semibold tracking-tight sm:text-4xl">Welcome back, {{ request.user.username }}</h1>
+                <p class="mt-3 max-w-2xl text-sm leading-6 text-slate-100">Keep track of your courses, stay on top of enrollment, and jump quickly to the parts of the platform you use most.</p>
+            </div>
+            <div class="rounded-2xl bg-white/10 px-4 py-3 text-sm capitalize backdrop-blur">
+                Current role: {{ request.user.profile.role }}
+            </div>
+        </div>
     </div>
-</div>
 
-<div class="container">
-    <div class="card">
-        <h2>Dashboard</h2>
-        <p>Welcome back, {{ request.user.username }} 👋</p>
+    <div class="grid gap-5 md:grid-cols-3">
+        <div class="rounded-2xl border border-slate-200 bg-white p-6 shadow-soft">
+            <p class="text-sm font-medium text-slate-500">Total courses</p>
+            <p class="mt-3 text-3xl font-semibold text-slate-900">{{ total_courses }}</p>
+        </div>
+        <div class="rounded-2xl border border-slate-200 bg-white p-6 shadow-soft">
+            <p class="text-sm font-medium text-slate-500">Your enrollments</p>
+            <p class="mt-3 text-3xl font-semibold text-slate-900">{{ enrollments|length }}</p>
+        </div>
+        <div class="rounded-2xl border border-slate-200 bg-white p-6 shadow-soft">
+            <p class="text-sm font-medium text-slate-500">Courses you created</p>
+            <p class="mt-3 text-3xl font-semibold text-slate-900">{{ created_courses|length }}</p>
+        </div>
     </div>
-</div>
 
-<h1>Welcome, {{ request.user.username }}</h1>
+    <div class="grid gap-6 xl:grid-cols-[1.15fr_0.85fr]">
+        <div class="rounded-2xl border border-slate-200 bg-white p-6 shadow-soft">
+            <div class="mb-6 flex items-center justify-between">
+                <div>
+                    <h2 class="text-xl font-semibold text-slate-900">Your courses</h2>
+                    <p class="mt-1 text-sm text-slate-500">Everything you are currently enrolled in.</p>
+                </div>
+                <a href="{% url 'courses' %}" class="rounded-xl bg-brand-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-brand-700">Browse courses</a>
+            </div>
 
-<p>Role: {{ request.user.profile.role }}</p>
+            <div class="space-y-4">
+                {% for enroll in enrollments %}
+                    <div class="rounded-2xl border border-slate-200 bg-slate-50 p-5">
+                        <h3 class="text-lg font-semibold text-slate-900">{{ enroll.course.title }}</h3>
+                        <p class="mt-2 text-sm leading-6 text-slate-600">{{ enroll.course.description }}</p>
+                    </div>
+                {% empty %}
+                    <div class="rounded-2xl border border-dashed border-slate-300 bg-slate-50 p-8 text-center">
+                        <h3 class="text-lg font-semibold text-slate-900">No enrollments yet</h3>
+                        <p class="mt-2 text-sm text-slate-500">Start by exploring the course catalog and enrolling in something interesting.</p>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
 
-{% if request.user.profile.role == 'student' %}
-    <a href="{% url 'courses' %}">Browse Courses</a>
-{% endif %}
+        <div class="space-y-6">
+            <div class="rounded-2xl border border-slate-200 bg-white p-6 shadow-soft">
+                <h2 class="text-xl font-semibold text-slate-900">Quick actions</h2>
+                <div class="mt-5 space-y-3">
+                    <a href="{% url 'courses' %}" class="flex items-center justify-between rounded-2xl border border-slate-200 px-4 py-4 text-sm font-medium text-slate-700 transition hover:border-brand-200 hover:bg-brand-50 hover:text-brand-700">
+                        <span>View all courses</span>
+                        <span class="text-slate-400">Open</span>
+                    </a>
+                    {% if request.user.profile.role == 'student' %}
+                        <a href="{% url 'courses' %}" class="flex items-center justify-between rounded-2xl border border-slate-200 px-4 py-4 text-sm font-medium text-slate-700 transition hover:border-brand-200 hover:bg-brand-50 hover:text-brand-700">
+                            <span>Enroll in a new course</span>
+                            <span class="text-slate-400">Go</span>
+                        </a>
+                    {% endif %}
+                    {% if request.user.profile.role == 'instructor' %}
+                        <a href="{% url 'create_course' %}" class="flex items-center justify-between rounded-2xl border border-slate-200 px-4 py-4 text-sm font-medium text-slate-700 transition hover:border-brand-200 hover:bg-brand-50 hover:text-brand-700">
+                            <span>Create a new course</span>
+                            <span class="text-slate-400">Go</span>
+                        </a>
+                    {% endif %}
+                </div>
+            </div>
 
-{% if request.user.profile.role == 'instructor' %}
-    <a href="{% url 'create_course' %}">Create Course</a>
-{% endif %}
-
-<h2>Your Courses</h2>
-
-{% for enroll in enrollments %}
-    <p>{{ enroll.course.title }}</p>
-{% empty %}
-    <p>You are not enrolled in any courses.</p>
-{% endfor %}
-
-<a href="{% url 'courses' %}">Browse Courses</a><br><br>
-<br>
-<br>
-<a href="{% url 'logout' %}">Logout</a>
-
-</body>
-</html>
+            {% if request.user.profile.role == 'instructor' %}
+                <div class="rounded-2xl border border-slate-200 bg-white p-6 shadow-soft">
+                    <h2 class="text-xl font-semibold text-slate-900">Courses you created</h2>
+                    <div class="mt-5 space-y-3">
+                        {% for course in created_courses %}
+                            <div class="rounded-2xl bg-slate-50 p-4">
+                                <h3 class="font-semibold text-slate-900">{{ course.title }}</h3>
+                                <p class="mt-2 text-sm leading-6 text-slate-500">{{ course.description }}</p>
+                            </div>
+                        {% empty %}
+                            <p class="text-sm text-slate-500">You have not created any courses yet.</p>
+                        {% endfor %}
+                    </div>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</section>
+{% endblock %}

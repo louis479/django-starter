@@ -1,24 +1,57 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Login</title>
-</head>
-<body>
+{% extends 'accounts/base.html' %}
 
-<h2>Login</h2>
+{% block title %}Login | Swahilipot Learning{% endblock %}
 
-{% for message in messages %}
-    <p style="color:red;">{{ message }}</p>
-{% endfor %}
+{% block auth_content %}
+<section class="relative overflow-hidden">
+    <div class="absolute inset-0 bg-gradient-to-br from-brand-900 via-slate-900 to-accent"></div>
+    <div class="absolute inset-0 bg-[radial-gradient(circle_at_top_right,_rgba(255,255,255,0.16),_transparent_32%)]"></div>
 
-<form method="POST">
-    {% csrf_token %}
-    <input type="text" name="username" placeholder="Username"><br><br>
-    <input type="password" name="password" placeholder="Password"><br><br>
-    <button type="submit">Login</button>
-</form>
+    <div class="relative mx-auto flex min-h-[calc(100vh-73px)] max-w-7xl items-center px-4 py-12 sm:px-6 lg:px-8">
+        <div class="grid w-full gap-10 lg:grid-cols-[1.1fr_0.9fr]">
+            <div class="self-center text-white">
+                <p class="text-sm font-semibold uppercase tracking-[0.2em] text-brand-100">Welcome back</p>
+                <h1 class="mt-4 max-w-xl text-4xl font-semibold tracking-tight sm:text-5xl">Welcome to SwahiliPot learning Platform.</h1>
+                <p class="mt-6 max-w-lg text-base leading-7 text-slate-200">Sign in to enroll in your courses and enhance learning flow with a calmer, more polished workspace.</p>
+            </div>
 
-<a href="{% url 'register' %}">Register</a>
+            <div class="rounded-3xl border border-white/20 bg-white p-8 shadow-2xl shadow-slate-950/20 sm:p-10">
+                <div class="mb-8">
+                    <h2 class="text-2xl font-semibold tracking-tight text-slate-900">Login</h2>
+                    <p class="mt-2 text-sm text-slate-500">Use your Swahilipot Learning account to continue.</p>
+                </div>
 
-</body>
-</html>
+                {% if messages %}
+                    <div class="mb-6 space-y-3">
+                        {% for message in messages %}
+                            <div class="rounded-2xl border px-4 py-3 text-sm {% if message.tags == 'error' %}border-red-200 bg-red-50 text-red-700{% else %}border-emerald-200 bg-emerald-50 text-emerald-700{% endif %}">
+                                {{ message }}
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+
+                <form method="POST" class="space-y-5">
+                    {% csrf_token %}
+                    <div>
+                        <label for="username" class="mb-2 block text-sm font-medium text-slate-700">Username</label>
+                        <input id="username" type="text" name="username" placeholder="Enter your username" class="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-brand-500 focus:bg-white focus:ring-4 focus:ring-brand-100">
+                    </div>
+
+                    <div>
+                        <label for="password" class="mb-2 block text-sm font-medium text-slate-700">Password</label>
+                        <input id="password" type="password" name="password" placeholder="Enter your password" class="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-brand-500 focus:bg-white focus:ring-4 focus:ring-brand-100">
+                    </div>
+
+                    <button type="submit" class="inline-flex w-full items-center justify-center rounded-2xl bg-slate-900 px-4 py-3 text-sm font-semibold text-white transition hover:bg-slate-800">Sign In</button>
+                </form>
+
+                <p class="mt-6 text-sm text-slate-500">
+                    New here?
+                    <a href="{% url 'register' %}" class="font-semibold text-brand-700 hover:text-brand-800">Create an account</a>
+                </p>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
